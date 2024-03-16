@@ -6,22 +6,6 @@ resource "aws_ecr_repository" "fiap_producao" {
   }
 }
 
-
-resource "aws_ecs_cluster" "fiap_producao" {
-  name = "cluster-${var.app_name}"
-  configuration {
-    execute_command_configuration {
-      logging = "DEFAULT"
-    }
-  }
-
-  service_connect_defaults {
-    namespace = var.ecs_namespace
-  }
-
-}
-
-
 resource "aws_security_group" "cluster" {
   name        = "cluster-${var.app_name}-sg"
   description = "Security group for cluster ECS"
@@ -107,7 +91,7 @@ resource "aws_ecs_task_definition" "fiap_producao" {
 
 resource "aws_ecs_service" "name" {
   name            = "service-${var.app_name}"
-  cluster         = aws_ecs_cluster.fiap_producao.id
+  cluster         = data.fiap_producao.id
   task_definition = aws_ecs_task_definition.fiap_producao.arn
   desired_count   = 1
   launch_type     = "FARGATE"
