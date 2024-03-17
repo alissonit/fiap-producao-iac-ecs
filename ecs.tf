@@ -59,7 +59,7 @@ resource "aws_ecs_task_definition" "fiap_producao" {
       environment = [
         {
           name  = "MYSQL_HOST"
-          value = "${var.rds_host}"
+          value = "${data.aws_db_instance.database.endpoint}"
         },
         {
           name  = "MYSQL_USERNAME"
@@ -91,7 +91,7 @@ resource "aws_ecs_task_definition" "fiap_producao" {
 
 resource "aws_ecs_service" "name" {
   name            = "service-${var.app_name}"
-  cluster         = data.fiap_producao.id
+  cluster         = data.aws_ecs_cluster.fiap_pedidos.cluster_name
   task_definition = aws_ecs_task_definition.fiap_producao.arn
   desired_count   = 1
   launch_type     = "FARGATE"

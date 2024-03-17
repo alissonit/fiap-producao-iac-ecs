@@ -65,6 +65,6 @@ variable "parameter_group_name" {
   description = "RDS parameter group name"
 }
 
-variable "ecs_namespace" {
-  description = "ECS Namespace"
-}
+//variable "ecs_namespace" {
+//  description = "ECS Namespace"
+//}
