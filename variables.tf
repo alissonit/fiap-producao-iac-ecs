@@ -61,8 +61,8 @@ variable "parameter_group_name" {
   description = "RDS parameter group name"
 }
 
-variable "mongo_password" {
-  description = "mongo password"
+variable "mongo_uri" {
+  description = "mongo uri"
   sensitive   = true
 }
 //variable "ecs_namespace" {
