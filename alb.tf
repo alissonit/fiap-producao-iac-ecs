@@ -33,9 +33,9 @@ resource "aws_lb_target_group" "fiap_producao" {
   target_type = "ip"
   health_check {
     path                = "/api/v1/health-check"
-    port                = 8080
+    port                = 8082
     protocol            = "HTTP"
-    matcher             = "200-399"
+    matcher             = "200-499"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 3
@@ -56,6 +56,18 @@ resource "aws_security_group" "balancer" {
     description      = "ingress port 80"
     from_port        = 80
     to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    security_groups  = []
+    ipv6_cidr_blocks = []
+    prefix_list_ids  = []
+
+  }
+
+  ingress {
+    description      = "ingress port 8082"
+    from_port        = 8082
+    to_port          = 8082
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     security_groups  = []

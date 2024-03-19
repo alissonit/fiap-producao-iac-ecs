@@ -6,30 +6,14 @@ resource "aws_ecr_repository" "fiap_producao" {
   }
 }
 
-
-resource "aws_ecs_cluster" "fiap_producao" {
-  name = "cluster-${var.app_name}"
-  configuration {
-    execute_command_configuration {
-      logging = "DEFAULT"
-    }
-  }
-
-  service_connect_defaults {
-    namespace = var.ecs_namespace
-  }
-
-}
-
-
 resource "aws_security_group" "cluster" {
   name        = "cluster-${var.app_name}-sg"
   description = "Security group for cluster ECS"
   vpc_id      = data.aws_vpc.cluster.id
 
   ingress {
-    from_port       = 8080
-    to_port         = 8080
+    from_port       = 8082
+    to_port         = 8082
     protocol        = "tcp"
     security_groups = [aws_security_group.balancer.id]
   }
@@ -64,9 +48,9 @@ resource "aws_ecs_task_definition" "fiap_producao" {
       image = "${aws_ecr_repository.fiap_producao.repository_url}:0.0.1"
       portMappings = [
         {
-          name          = "service-fiap-producao-8080-tcp"
-          containerPort = 8080
-          hostPort      = 8080
+          name          = "service-fiap-producao-8082-tcp"
+          containerPort = 8082
+          hostPort      = 8082
           protocol      = "tcp"
           appProtocol   = "http"
         }
@@ -74,16 +58,8 @@ resource "aws_ecs_task_definition" "fiap_producao" {
       ],
       environment = [
         {
-          name  = "MYSQL_HOST"
-          value = "${var.rds_host}"
-        },
-        {
-          name  = "MYSQL_USERNAME"
-          value = "${var.rds_username}"
-        },
-        {
-          name  = "MYSQL_PASSWORD"
-          value = "${var.rds_password}"
+          name  = "MONGODB_URI"
+          value = var.mongo_uri
         }
       ],
       logConfiguration = {
@@ -107,7 +83,7 @@ resource "aws_ecs_task_definition" "fiap_producao" {
 
 resource "aws_ecs_service" "name" {
   name            = "service-${var.app_name}"
-  cluster         = aws_ecs_cluster.fiap_producao.id
+  cluster         = data.aws_ecs_cluster.fiap_pedidos.cluster_name
   task_definition = aws_ecs_task_definition.fiap_producao.arn
   desired_count   = 1
   launch_type     = "FARGATE"
@@ -120,13 +96,13 @@ resource "aws_ecs_service" "name" {
   network_configuration {
     subnets          = [data.aws_subnet.clustera.id, data.aws_subnet.clusterb.id]
     security_groups  = [aws_security_group.cluster.id]
-    assign_public_ip = false
+    assign_public_ip = true
   }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.fiap_producao.arn
     container_name   = "service-fiap-producao"
-    container_port   = 8080
+    container_port   = 8082
   }
   tags = {
     Name = "service-${var.app_name}"

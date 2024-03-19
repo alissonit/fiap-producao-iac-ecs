@@ -1,7 +1,3 @@
-data "aws_vpc" "default" {
-  default = true
-}
-
 data "aws_vpc" "cluster" {
   filter {
     name   = "tag:Name"
@@ -35,4 +31,16 @@ data "aws_subnet" "clusterc" {
 
 data "aws_iam_role" "name" {
   name = "ecsTaskExecutionRole"
+}
+
+data "aws_ecr_repository" "name" {
+  name = "fiap-pedidos"
+}
+
+data "aws_ecs_cluster" "fiap_pedidos" {
+  cluster_name = "cluster-fiap-pedidos"
+}
+
+data "aws_db_instance" "database" {
+  db_instance_identifier = "db-fiap-pedidos"
 }

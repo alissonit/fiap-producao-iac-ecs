@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
-    bucket  = "management-state-tf"
-    key     = "ecs/terraform.tfstate"
+    bucket  = "01-sandbox-state-tf"
+    key     = "ecs/fiap-production-iac/terraform.tfstate"
     region  = "sa-east-1"
     profile = "fiap-env"
   }
