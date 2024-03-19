@@ -59,7 +59,7 @@ resource "aws_ecs_task_definition" "fiap_producao" {
       environment = [
         {
           name  = "MONGODB_URI"
-          value = "mongodb+srv://fiapuser:F1ap1993@fiap-production.2jdyjer.mongodb.net/?retryWrites=true&w=majority&appName=fiap-production"
+          value = var.mongo_password
         }
       ],
       logConfiguration = {
