@@ -25,10 +25,6 @@ variable "db_name" {
 
 }
 
-variable "rds_host" {
-  description = "RDS host"
-}
-
 variable "rds_password" {
   description = "RDS password"
   sensitive   = true
@@ -65,6 +61,10 @@ variable "parameter_group_name" {
   description = "RDS parameter group name"
 }
 
+variable "mongo_password" {
+  description = "mongo password"
+  sensitive   = true
+}
 //variable "ecs_namespace" {
 //  description = "ECS Namespace"
 //}
